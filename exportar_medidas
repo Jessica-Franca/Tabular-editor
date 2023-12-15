@@ -1,0 +1,16 @@
+// Construct a list of all visible columns and measures:
+// Esta linha cria uma lista de objetos que representam todas as medidas e colunas visíveis no modelo Tabular, excluindo aqueles que estão ocultos
+var objects = Model.AllMeasures.Where(m => !m.IsHidden && !m.Table.IsHidden).Cast<ITabularNamedObject>()
+      .Concat(Model.AllColumns.Where(c => !c.IsHidden && !c.Table.IsHidden));
+
+// Get their properties in TSV format (tabulator-separated):
+// Esta linha chama a função ExportProperties para obter as propriedades dos objetos na lista. A função ExportProperties provavelmente está definida em algum lugar no seu script C# e gera uma representação de texto (TSV - tab-separated values) das propriedades dos objetos
+var tsv = ExportProperties(objects,"Name,ObjectType,Parent,Description,FormatString,DataType,Expression");
+
+// (Optional) Output to screen (can then be copy-pasted into Excel):
+// Tirar comentario de  *tsv.Output(); * se quiser copiar dados para jogar para o exce
+// tsv.Output();  
+
+// ...or save the TSV to a file:
+// Ajustar para o seu caminho do pc, onde vai salvar o arquivo.
+SaveFile("c:\\Users\\Jéssica\\Downloads\\documentation.tsv", tsv);
