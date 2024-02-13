@@ -1,0 +1,41 @@
+// Inicializa uma lista para armazenar as linhas de saída
+var lines = new List<string>();
+
+// Adiciona o cabeçalho à lista, incluindo o Nome da Tabela
+lines.Add("Table Name\tName\tExpression\tDescription");
+
+// Itera por todos os Calculation Groups no modelo
+foreach (var calcGroup in Model.CalculationGroups)
+{
+    // O nome da tabela pode ser acessado diretamente do calcGroup.Name para Calculation Groups
+    var tableName = calcGroup.Name;
+    
+    // Itera por todos os Calculation Items dentro de cada Calculation Group
+    foreach (var calcItem in calcGroup.CalculationItems)
+    {
+        // Remove quebras de linha da expressão
+        var expressionClean = calcItem.Expression.Replace("\n", " ").Replace("\r", " ");
+        
+        // Obtém a descrição do Calculation Item, tratando casos onde pode não existir descrição
+        var description = calcItem.Description ?? "No Description"; // Usa "No Description" se null
+        
+        // Constrói a linha com nome da tabela, nome do item, expressão e descrição, usando tabulação como delimitador
+        var line = tableName + "\t" + calcItem.Name + "\t" + expressionClean + "\t" + description;
+        
+        // Adiciona a linha à lista
+        lines.Add(line);
+    }
+}
+
+// Converte a lista de linhas em uma única string, separando cada linha por uma nova linha
+var tsvString = string.Join("\n", lines);
+
+// Exibe a string resultante no output do Tabular Editor
+Output(tsvString);
+
+// Opcional: Salva a string em um arquivo TSV
+var filePath = @"c:\path\to\your\file.tsv";
+System.IO.File.WriteAllText(filePath, tsvString);
+
+// Exibe uma mensagem informando que a exportação foi concluída
+Output("Exportação concluída. Arquivo salvo em: " + filePath);
